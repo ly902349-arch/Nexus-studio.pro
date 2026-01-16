@@ -1,0 +1,1333 @@
+<!-- Gemini AI Assistant Component - النسخة الكاملة -->
+<div class="gemini-assistant" id="geminiAssistant">
+    <!-- رأس المساعد -->
+    <div class="assistant-header">
+        <div class="assistant-brand">
+            <div class="assistant-avatar">
+                <i class="fas fa-robot"></i>
+                <div class="ai-badge">AI</div>
+            </div>
+            <div class="assistant-info">
+                <h4>
+                    <span class="assistant-title">مساعد Nexus الذكي</span>
+                    <span class="assistant-version">v2.0</span>
+                </h4>
+                <div class="assistant-status">
+                    <div class="status-indicator" id="apiStatus">
+                        <i class="fas fa-circle"></i>
+                        <span id="statusText">جاري التحميل...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="assistant-controls">
+            <select class="mode-select" id="aiMode" onchange="changeAIMode(this.value)">
+                <option value="chat">💬 محادثة عامة</option>
+                <option value="script">📝 كتابة سيناريو</option>
+                <option value="ideas">💡 توليد أفكار</option>
+                <option value="analysis">📊 تحليل أداء</option>
+                <option value="design">🎨 تصميم جرافيك</option>
+            </select>
+            
+            <button class="control-btn" onclick="clearChat()" title="مسح المحادثة">
+                <i class="fas fa-trash"></i>
+            </button>
+            
+            <button class="control-btn" onclick="toggleAIAssistant()" title="إغلاق">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- نافذة المحادثة -->
+    <div class="assistant-chat-container">
+        <div class="assistant-chat" id="aiChatWindow">
+            <!-- الرسائل تظهر هنا -->
+            <div class="message ai-welcome">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="message-sender">مساعد Nexus</div>
+                    <div class="message-body">
+                        <h4>مرحباً بك في Nexus Studio! 👋</h4>
+                        <p>أنا المساعد الذكي المدعوم بالذكاء الاصطناعي. يمكنني مساعدتك في:</p>
+                        <ul>
+                            <li>📝 كتابة سيناريوهات الفيديو</li>
+                            <li>💡 توليد أفكار محتوى مبتكرة</li>
+                            <li>📊 تحليل أداء الفيديوهات</li>
+                            <li>🎨 تصميم الثمبنيلات والجرافيك</li>
+                            <li>📡 تحضير خطط البث المباشر</li>
+                        </ul>
+                        <p>💡 <strong>نصيحة:</strong> اختر الوضع المناسب من الأعلى للحصول على أفضل النتائج!</p>
+                    </div>
+                    <div class="message-time" id="welcomeTime"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- الأدوات السريعة -->
+    <div class="quick-tools">
+        <div class="tools-header">
+            <h5><i class="fas fa-bolt"></i> أدوات سريعة</h5>
+        </div>
+        
+        <div class="tools-grid">
+            <button class="tool-card" onclick="quickAction('سيناريو عن التسويق الرقمي')">
+                <div class="tool-icon" style="background: #6366f1;">
+                    <i class="fas fa-scroll"></i>
+                </div>
+                <div class="tool-info">
+                    <div class="tool-name">سيناريو فيديو</div>
+                    <div class="tool-desc">كتابة احترافية</div>
+                </div>
+            </button>
+            
+            <button class="tool-card" onclick="quickAction('أفكار فيديو عن التكنولوجيا')">
+                <div class="tool-icon" style="background: #10b981;">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div class="tool-info">
+                    <div class="tool-name">أفكار محتوى</div>
+                    <div class="tool-desc">إبداعية وجديدة</div>
+                </div>
+            </button>
+            
+            <button class="tool-card" onclick="quickAction('حلل فيديو حصل على 5000 مشاهدة')">
+                <div class="tool-icon" style="background: #f59e0b;">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="tool-info">
+                    <div class="tool-name">تحليل أداء</div>
+                    <div class="tool-desc">نقاط قوة وضعف</div>
+                </div>
+            </button>
+            
+            <button class="tool-card" onclick="quickAction('صمم ثامبريل لفيديو تعليمي')">
+                <div class="tool-icon" style="background: #8b5cf6;">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div class="tool-info">
+                    <div class="tool-name">تصميم جرافيك</div>
+                    <div class="tool-desc">ثمبنيلات وبانرات</div>
+                </div>
+            </button>
+        </div>
+    </div>
+    
+    <!-- منطقة الإدخال -->
+    <div class="input-section">
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea 
+                    id="aiInput" 
+                    placeholder="اكتب رسالتك هنا... (اضغط Enter للإرسال)"
+                    rows="2"
+                    oninput="adjustTextareaHeight(this)"
+                    onkeydown="handleInputKey(event)"
+                ></textarea>
+                
+                <div class="input-actions">
+                    <button class="action-btn" onclick="showTemplates()" title="قوالب جاهزة">
+                        <i class="fas fa-magic"></i>
+                    </button>
+                    
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>إرسال</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="input-hints">
+                <span class="hint-text">💡 جرب:</span>
+                <button class="hint-btn" onclick="setExample('كيف أبدأ قناة يوتيوب ناجحة؟')">
+                    بدء قناة يوتيوب
+                </button>
+                <button class="hint-btn" onclick="setExample('أفضل طرق لتحسين مشاهدات الفيديو')">
+                    تحسين المشاهدات
+                </button>
+                <button class="hint-btn" onclick="setExample('خطط لبث مباشر عن التكنولوجيا')">
+                    بث مباشر
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- حالة النظام -->
+    <div class="system-status">
+        <div class="status-item">
+            <i class="fas fa-database"></i>
+            <span>الذاكرة: <span id="chatMemory">0</span> رسالة</span>
+        </div>
+        <div class="status-item">
+            <i class="fas fa-bolt"></i>
+            <span>الوضع: <span id="currentMode">محادثة</span></span>
+        </div>
+        <div class="status-item">
+            <i class="fas fa-clock"></i>
+            <span>آخر نشاط: <span id="lastActivity">الآن</span></span>
+        </div>
+    </div>
+</div>
+
+<!-- قوالب جاهزة -->
+<div class="templates-modal" id="templatesModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-layer-group"></i> قوالب جاهزة</h4>
+            <button class="modal-close" onclick="closeTemplates()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="template-category">
+                <h5>📝 كتابة السيناريوهات</h5>
+                <div class="template-list">
+                    <button class="template-item" onclick="useTemplate('اكتب سيناريو فيديو تعليمي عن [موضوع]')">
+                        فيديو تعليمي
+                    </button>
+                    <button class="template-item" onclick="useTemplate('اكتب سيناريو فيديو ترفيهي عن [موضوع]')">
+                        فيديو ترفيهي
+                    </button>
+                    <button class="template-item" onclick="useTemplate('اكتب سيناريو فيديو تسويقي عن [منتج]')">
+                        فيديو تسويقي
+                    </button>
+                </div>
+            </div>
+            
+            <div class="template-category">
+                <h5>💡 توليد الأفكار</h5>
+                <div class="template-list">
+                    <button class="template-item" onclick="useTemplate('أعطني 5 أفكار فيديو لقطاع [القطاع]')">
+                        أفكار حسب القطاع
+                    </button>
+                    <button class="template-item" onclick="useTemplate('أعطني 5 أفكار فيديو للجمهور [الجمهور]')">
+                        أفكار حسب الجمهور
+                    </button>
+                    <button class="template-item" onclick="useTemplate('أعطني 5 أفكار فيديو للمنصة [المنصة]')">
+                        أفكار حسب المنصة
+                    </button>
+                </div>
+            </div>
+            
+            <div class="template-category">
+                <h5>📊 التحليلات</h5>
+                <div class="template-list">
+                    <button class="template-item" onclick="useTemplate('حلل أداء فيديو مع بيانات [البيانات]')">
+                        تحليل بالأرقام
+                    </button>
+                    <button class="template-item" onclick="useTemplate('مقارنة بين فيديوهين عن [الموضوع]')">
+                        مقارنة بين فيديوهين
+                    </button>
+                    <button class="template-item" onclick="useTemplate('توصيات لتحسين أداء [نوع المحتوى]')">
+                        توصيات للتحسين
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- أنماط CSS -->
+<style>
+    /* الهيكل الرئيسي */
+    .gemini-assistant {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        height: 700px;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Cairo', sans-serif;
+    }
+    
+    /* الرأس */
+    .assistant-header {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    
+    .assistant-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .assistant-avatar {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    .ai-badge {
+        position: absolute;
+        bottom: -5px;
+        right: -5px;
+        background: #10b981;
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+    
+    .assistant-info h4 {
+        margin: 0;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .assistant-version {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+    }
+    
+    .assistant-status {
+        margin-top: 5px;
+    }
+    
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        opacity: 0.9;
+    }
+    
+    .status-indicator i {
+        font-size: 8px;
+        color: #10b981;
+    }
+    
+    .assistant-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .mode-select {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        padding: 8px 15px;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        min-width: 160px;
+    }
+    
+    .mode-select option {
+        background: #6366f1;
+        color: white;
+    }
+    
+    .control-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    
+    .control-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+    
+    /* نافذة المحادثة */
+    .assistant-chat-container {
+        flex: 1;
+        overflow: hidden;
+        background: #f8fafc;
+    }
+    
+    .assistant-chat {
+        height: 100%;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .assistant-chat::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .assistant-chat::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 3px;
+    }
+    
+    .assistant-chat::-webkit-scrollbar-thumb {
+        background: rgba(99, 102, 241, 0.3);
+        border-radius: 3px;
+    }
+    
+    /* الرسائل */
+    .message {
+        display: flex;
+        gap: 12px;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    
+    .message.user .message-avatar {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+    
+    .message-content {
+        flex: 1;
+        background: white;
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        max-width: 85%;
+    }
+    
+    .message.user .message-content {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 1px solid #bae6fd;
+    }
+    
+    .message.ai-welcome .message-content {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border: 1px solid #fbbf24;
+    }
+    
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    
+    .message-sender {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 14px;
+    }
+    
+    .message-time {
+        font-size: 11px;
+        color: #6b7280;
+    }
+    
+    .message-body {
+        color: #374151;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+    
+    .message-body h4 {
+        margin: 0 0 10px 0;
+        color: #1f2937;
+    }
+    
+    .message-body ul {
+        margin: 10px 0;
+        padding-right: 20px;
+    }
+    
+    .message-body li {
+        margin-bottom: 5px;
+    }
+    
+    .message-body strong {
+        color: #1f2937;
+    }
+    
+    /* الأدوات السريعة */
+    .quick-tools {
+        border-top: 1px solid #e5e7eb;
+        background: white;
+        padding: 15px;
+    }
+    
+    .tools-header {
+        margin-bottom: 15px;
+    }
+    
+    .tools-header h5 {
+        margin: 0;
+        color: #1f2937;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+    
+    .tool-card {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: right;
+    }
+    
+    .tool-card:hover {
+        background: white;
+        border-color: #6366f1;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+    
+    .tool-icon {
+        width: 40px;
+        height: 40px;
+        background: #6366f1;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    
+    .tool-info {
+        flex: 1;
+    }
+    
+    .tool-name {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 13px;
+        margin-bottom: 2px;
+    }
+    
+    .tool-desc {
+        color: #6b7280;
+        font-size: 11px;
+    }
+    
+    /* منطقة الإدخال */
+    .input-section {
+        border-top: 1px solid #e5e7eb;
+        background: white;
+        padding: 15px 20px;
+    }
+    
+    .input-container {
+        position: relative;
+    }
+    
+    .input-wrapper {
+        position: relative;
+        margin-bottom: 10px;
+    }
+    
+    #aiInput {
+        width: 100%;
+        background: #f8fafc;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px 50px 12px 15px;
+        color: #1f2937;
+        font-size: 14px;
+        resize: none;
+        min-height: 60px;
+        max-height: 120px;
+        line-height: 1.5;
+        font-family: 'Cairo', sans-serif;
+        transition: all 0.2s;
+    }
+    
+    #aiInput:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .input-actions {
+        position: absolute;
+        left: 12px;
+        bottom: 12px;
+        display: flex;
+        gap: 8px;
+    }
+    
+    .action-btn {
+        background: white;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        color: #6b7280;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    
+    .action-btn:hover {
+        background: #f3f4f6;
+        color: #6366f1;
+    }
+    
+    .send-btn {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border: none;
+        border-radius: 10px;
+        padding: 0 20px;
+        height: 40px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+    
+    .send-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    
+    .send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .input-hints {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .hint-text {
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    
+    .hint-btn {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 20px;
+        padding: 4px 12px;
+        color: #0369a1;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .hint-btn:hover {
+        background: #e0f2fe;
+        transform: translateY(-1px);
+    }
+    
+    /* حالة النظام */
+    .system-status {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: #f8fafc;
+        border-top: 1px solid #e5e7eb;
+        font-size: 12px;
+    }
+    
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #6b7280;
+    }
+    
+    .status-item i {
+        font-size: 12px;
+        color: #6366f1;
+    }
+    
+    #chatMemory, #currentMode, #lastActivity {
+        color: #1f2937;
+        font-weight: 600;
+    }
+    
+    /* النافذة المنبثقة */
+    .templates-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    .templates-modal.active {
+        display: flex;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 80vh;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease-out;
+    }
+    
+    @keyframes slideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .modal-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .modal-header h4 {
+        margin: 0;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .modal-close {
+        background: #f3f4f6;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        color: #6b7280;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    
+    .modal-close:hover {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+    
+    .modal-body {
+        padding: 20px;
+        overflow-y: auto;
+        max-height: 60vh;
+    }
+    
+    .template-category {
+        margin-bottom: 25px;
+    }
+    
+    .template-category h5 {
+        color: #1f2937;
+        font-size: 16px;
+        margin: 0 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+    
+    .template-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .template-item {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px 15px;
+        color: #374151;
+        text-align: right;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 14px;
+    }
+    
+    .template-item:hover {
+        background: white;
+        border-color: #6366f1;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+    
+    /* التجاوب */
+    @media (max-width: 768px) {
+        .gemini-assistant {
+            height: 100vh;
+            border-radius: 0;
+        }
+        
+        .assistant-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .assistant-controls {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .tools-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .system-status {
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .modal-content {
+            width: 95%;
+            margin: 10px;
+        }
+    }
+</style>
+
+<!-- JavaScript الخاص بالمكون -->
+<script>
+    // تهيئة الوقت الترحيبي
+    document.getElementById('welcomeTime').textContent = new Date().toLocaleTimeString('ar-EG', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    // تحديث حالة API
+    function updateAPIStatus() {
+        const statusElement = document.getElementById('apiStatus');
+        const statusText = document.getElementById('statusText');
+        
+        if (!statusElement || !statusText) return;
+        
+        if (window.geminiAI) {
+            const isDemo = window.geminiAI.isDemoMode;
+            
+            if (isDemo) {
+                statusElement.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>';
+                statusText.textContent = 'وضع تجريبي';
+                statusElement.title = 'أضف Gemini API Key للحصول على ميزات كاملة';
+            } else {
+                statusElement.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i>';
+                statusText.textContent = 'متصل';
+                statusElement.title = 'Gemini AI مفعل';
+            }
+        }
+    }
+    
+    // دالة إرسال الرسالة
+    async function sendMessage() {
+        const input = document.getElementById('aiInput');
+        if (!input) return;
+        
+        const message = input.value.trim();
+        if (!message) return;
+        
+        // إضافة رسالة المستخدم
+        addMessage('user', message);
+        
+        // مسح الحقل
+        input.value = '';
+        adjustTextareaHeight(input);
+        
+        // تعطيل الإرسال
+        const sendBtn = document.getElementById('sendBtn');
+        if (sendBtn) {
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        }
+        
+        try {
+            // الحصول على الرد
+            let response;
+            const mode = document.getElementById('aiMode').value;
+            
+            if (window.geminiAI) {
+                switch(mode) {
+                    case 'script':
+                        response = await window.geminiAI.generateScript(message);
+                        break;
+                    case 'ideas':
+                        response = await window.geminiAI.generateVideoIdeas([message]);
+                        break;
+                    case 'analysis':
+                        response = await window.geminiAI.analyzePerformance({ topic: message });
+                        break;
+                    case 'design':
+                        response = await window.geminiAI.generateThumbnailPrompt(message);
+                        break;
+                    default:
+                        response = await window.geminiAI.generateContent(message);
+                }
+            } else {
+                response = 'Gemini AI غير متاح. تأكد من تحميل الملفات.';
+            }
+            
+            // إضافة رد المساعد
+            addMessage('ai', response);
+            
+            // حفظ في السجل
+            saveToHistory(message, response, mode);
+            
+            // تحديث الإحصائيات
+            updateStats();
+            
+        } catch (error) {
+            console.error('Error sending message:', error);
+            addMessage('ai', '⚠️ حدث خطأ. حاول مرة أخرى.');
+        } finally {
+            // تمكين الإرسال
+            if (sendBtn) {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>إرسال</span>';
+            }
+        }
+    }
+    
+    // إضافة رسالة للواجهة
+    function addMessage(sender, content) {
+        const chatWindow = document.getElementById('aiChatWindow');
+        if (!chatWindow) return;
+        
+        const messageId = `msg_${Date.now()}`;
+        const timestamp = new Date().toLocaleTimeString('ar-EG', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+        
+        const avatar = sender === 'user' ? '👤' : '🤖';
+        const senderName = sender === 'user' ? 'أنت' : 'مساعد Nexus';
+        
+        messageDiv.innerHTML = `
+            <div class="message-avatar">${avatar}</div>
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="message-sender">${senderName}</span>
+                    <span class="message-time">${timestamp}</span>
+                </div>
+                <div class="message-body">${formatMessage(content)}</div>
+            </div>
+        `;
+        
+        chatWindow.appendChild(messageDiv);
+        
+        // التمرير للأسفل
+        scrollToBottom();
+    }
+    
+    // تنسيق الرسالة
+    function formatMessage(content) {
+        if (!content) return '';
+        
+        let formatted = content
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/`(.*?)`/g, '<code>$1</code>')
+            .replace(/\n/g, '<br>');
+        
+        return formatted;
+    }
+    
+    // ضبط ارتفاع مربع النص
+    function adjustTextareaHeight(textarea) {
+        if (!textarea) return;
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    }
+    
+    // التمرير للأسفل
+    function scrollToBottom() {
+        const chatWindow = document.getElementById('aiChatWindow');
+        if (chatWindow) {
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+    }
+    
+    // معالج ضغطات المفاتيح
+    function handleInputKey(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+    
+    // تغيير وضع AI
+    function changeAIMode(mode) {
+        const modeNames = {
+            'chat': 'محادثة',
+            'script': 'سيناريو',
+            'ideas': 'أفكار',
+            'analysis': 'تحليل',
+            'design': 'تصميم'
+        };
+        
+        document.getElementById('currentMode').textContent = modeNames[mode] || mode;
+        
+        // تحديث تلميح الإدخال
+        const input = document.getElementById('aiInput');
+        const hints = {
+            'chat': 'اسأل عن أي شيء...',
+            'script': 'اكتب موضوع الفيديو...',
+            'ideas': 'اكتب كلمات مفتاحية...',
+            'analysis': 'صف بيانات الفيديو...',
+            'design': 'صف التصميم المطلوب...'
+        };
+        
+        if (input) {
+            input.placeholder = hints[mode] || 'اكتب رسالتك هنا...';
+        }
+        
+        showNotification(`✅ تم التبديل إلى: ${modeNames[mode] || mode}`);
+    }
+    
+    // إجراء سريع
+    function quickAction(text) {
+        const input = document.getElementById('aiInput');
+        if (input) {
+            input.value = text;
+            input.focus();
+            adjustTextareaHeight(input);
+            showNotification('✏️ جاهز للإرسال');
+        }
+    }
+    
+    // تعيين مثال
+    function setExample(text) {
+        const input = document.getElementById('aiInput');
+        if (input) {
+            input.value = text;
+            input.focus();
+            adjustTextareaHeight(input);
+        }
+    }
+    
+    // عرض القوالب
+    function showTemplates() {
+        document.getElementById('templatesModal').classList.add('active');
+    }
+    
+    // إغلاق القوالب
+    function closeTemplates() {
+        document.getElementById('templatesModal').classList.remove('active');
+    }
+    
+    // استخدام قالب
+    function useTemplate(template) {
+        const input = document.getElementById('aiInput');
+        if (input) {
+            input.value = template;
+            input.focus();
+            adjustTextareaHeight(input);
+            closeTemplates();
+            showNotification('📝 القالب جاهز للتعديل');
+        }
+    }
+    
+    // مسح المحادثة
+    function clearChat() {
+        const chatWindow = document.getElementById('aiChatWindow');
+        if (chatWindow) {
+            chatWindow.innerHTML = `
+                <div class="message ai-welcome">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="message-sender
+                        <div class="message-sender">مساعد Nexus</div>
+                        <div class="message-body">
+                            <h4>مرحباً بك مجدداً! 👋</h4>
+                            <p>تم مسح محادثتك السابقة. يمكنني مساعدتك في:</p>
+                            <ul>
+                                <li>📝 كتابة سيناريوهات الفيديو</li>
+                                <li>💡 توليد أفكار محتوى مبتكرة</li>
+                                <li>📊 تحليل أداء الفيديوهات</li>
+                                <li>🎨 تصميم الثمبنيلات والجرافيك</li>
+                                <li>📡 تحضير خطط البث المباشر</li>
+                            </ul>
+                            <p>💡 <strong>نصيحة:</strong> اختر الوضع المناسب من الأعلى للحصول على أفضل النتائج!</p>
+                        </div>
+                        <div class="message-time">${new Date().toLocaleTimeString('ar-EG', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // تحديث الإحصائيات
+        document.getElementById('chatMemory').textContent = '0';
+        document.getElementById('lastActivity').textContent = 'الآن';
+        
+        // مسح السجل المحلي
+        localStorage.removeItem('geminiChatHistory');
+        
+        showNotification('🗑️ تم مسح المحادثة بنجاح');
+        scrollToBottom();
+    }
+    
+    // حفظ في السجل
+    function saveToHistory(question, answer, mode) {
+        try {
+            const history = JSON.parse(localStorage.getItem('geminiChatHistory') || '[]');
+            history.push({
+                timestamp: new Date().toISOString(),
+                question,
+                answer,
+                mode,
+                length: question.length + answer.length
+            });
+            
+            // الاحتفاظ بآخر 50 رسالة فقط
+            if (history.length > 50) {
+                history.shift();
+            }
+            
+            localStorage.setItem('geminiChatHistory', JSON.stringify(history));
+        } catch (error) {
+            console.error('Error saving to history:', error);
+        }
+    }
+    
+    // تحديث الإحصائيات
+    function updateStats() {
+        try {
+            const history = JSON.parse(localStorage.getItem('geminiChatHistory') || '[]');
+            document.getElementById('chatMemory').textContent = history.length;
+            document.getElementById('lastActivity').textContent = 'الآن';
+            
+            // تحديث عدد الأحرف
+            const totalChars = history.reduce((sum, item) => sum + item.length, 0);
+            if (totalChars > 1000) {
+                document.getElementById('chatMemory').textContent += ` (${Math.round(totalChars / 1000)}k حرف)`;
+            }
+        } catch (error) {
+            console.error('Error updating stats:', error);
+        }
+    }
+    
+    // عرض الإشعارات
+    function showNotification(message) {
+        // إنشاء عنصر الإشعار
+        const notification = document.createElement('div');
+        notification.className = 'ai-notification';
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas fa-info-circle"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        // إضافة الأنماط
+        if (!document.querySelector('.notification-styles')) {
+            const styles = document.createElement('style');
+            styles.className = 'notification-styles';
+            styles.textContent = `
+                .ai-notification {
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%) translateY(-100px);
+                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+                    z-index: 3000;
+                    animation: slideDown 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards;
+                    font-family: 'Cairo', sans-serif;
+                    font-size: 14px;
+                    max-width: 90%;
+                    text-align: center;
+                }
+                
+                @keyframes slideDown {
+                    to { transform: translateX(-50%) translateY(0); }
+                }
+                
+                @keyframes fadeOut {
+                    to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                }
+                
+                .notification-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                
+                .notification-content i {
+                    font-size: 16px;
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        document.body.appendChild(notification);
+        
+        // إزالة الإشعار بعد 3 ثواني
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+    
+    // دالة للتشغيل/الإيقاف
+    function toggleAIAssistant() {
+        const assistant = document.getElementById('geminiAssistant');
+        if (assistant) {
+            assistant.style.display = assistant.style.display === 'none' ? 'flex' : 'none';
+            
+            if (assistant.style.display !== 'none') {
+                // تحديث حالة API عند إعادة الفتح
+                setTimeout(updateAPIStatus, 100);
+                scrollToBottom();
+            }
+        }
+    }
+    
+    // تحميل السجل عند البدء
+    function loadHistory() {
+        try {
+            const history = JSON.parse(localStorage.getItem('geminiChatHistory') || '[]');
+            if (history.length > 0) {
+                // تحديث العداد فقط
+                document.getElementById('chatMemory').textContent = history.length;
+                
+                // حساب آخر نشاط
+                const lastItem = history[history.length - 1];
+                const lastTime = new Date(lastItem.timestamp);
+                const now = new Date();
+                const diffMinutes = Math.floor((now - lastTime) / (1000 * 60));
+                
+                let lastActivityText = 'الآن';
+                if (diffMinutes > 0) {
+                    if (diffMinutes < 60) {
+                        lastActivityText = `قبل ${diffMinutes} دقيقة`;
+                    } else if (diffMinutes < 1440) {
+                        lastActivityText = `قبل ${Math.floor(diffMinutes / 60)} ساعة`;
+                    } else {
+                        lastActivityText = `قبل ${Math.floor(diffMinutes / 1440)} يوم`;
+                    }
+                }
+                
+                document.getElementById('lastActivity').textContent = lastActivityText;
+            }
+        } catch (error) {
+            console.error('Error loading history:', error);
+        }
+    }
+    
+    // تهيئة المكون
+    function initGeminiAssistant() {
+        // تحديث حالة API
+        updateAPIStatus();
+        
+        // تحميل السجل
+        loadHistory();
+        
+        // تحديث الوضع الحالي
+        const modeSelect = document.getElementById('aiMode');
+        if (modeSelect) {
+            changeAIMode(modeSelect.value);
+        }
+        
+        // إعداد event listener لتحديث حالة API عندما يتغير
+        if (window.geminiAI) {
+            // يمكن إضافة مستمع للأحداث هنا إذا كان geminiAI يقدمها
+            setInterval(updateAPIStatus, 30000); // تحديث كل 30 ثانية
+        }
+        
+        // إضافة دليل الاستخدام
+        console.log('✅ Gemini Assistant initialized');
+        console.log('📝 Available functions:');
+        console.log('   - sendMessage(): إرسال رسالة');
+        console.log('   - clearChat(): مسح المحادثة');
+        console.log('   - toggleAIAssistant(): عرض/إخفاء المساعد');
+        console.log('   - changeAIMode(mode): تغيير وضع AI');
+    }
+    
+    // تهيئة عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        // انتظر قليلاً لضمان تحميل جميع العناصر
+        setTimeout(initGeminiAssistant, 100);
+    });
+    
+    // جعل الدوال متاحة عالمياً
+    window.sendMessage = sendMessage;
+    window.clearChat = clearChat;
+    window.toggleAIAssistant = toggleAIAssistant;
+    window.changeAIMode = changeAIMode;
+    window.quickAction = quickAction;
+    window.setExample = setExample;
+    window.showTemplates = showTemplates;
+    window.closeTemplates = closeTemplates;
+    window.useTemplate = useTemplate;
+    window.handleInputKey = handleInputKey;
+    window.adjustTextareaHeight = adjustTextareaHeight;
+</script>
+</div>
