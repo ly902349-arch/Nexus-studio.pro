@@ -1,0 +1,7 @@
+{
+  "ai_assistant": {
+    "enabled": true,
+    "provider": "gemini",
+    "api_key": "AIzaSyBh6axDLjhHMkLnyh4r0eR3wFUpaRZSmqQ"
+  }
+}
